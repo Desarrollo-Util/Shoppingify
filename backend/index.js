@@ -4,21 +4,28 @@ const mongoose = require("mongoose");
 const app = express();
 const port = 4000;
 
-(async () => {
+const ItemModel = require("./models/item");
+const CategoryModel = require("./models/category");
+const ListModel = require("./models/list");
+const UserModel = require("./models/user");
+
+const index = async () => {
   await mongoose.connect(process.env.MONGODB_URL);
   console.log("DB connected!");
 
-  //Mongoose Models
-  const Product = mongoose.model("Product", { name: String, price: Number });
+  const pollo = await ItemModel.findByIdAndUpdate(
+    "613a44098a5282694bbf6fb8"
+  ).exec();
 
-  const sandia = new Product({ name: "Sandía", price: 1 });
+  pollo.category = "613a4440b8176505f66cfed5";
 
-  await sandia.save();
-  console.log("Sandía guardada");
+  await pollo.save();
 
   app.listen(port, () => {
     console.log(
       `Example app listening at http://localhost:${process.env.PORT}`
     );
   });
-})();
+};
+
+index();
