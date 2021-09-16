@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const app = express();
 const port = 4000;
 
@@ -13,13 +14,21 @@ const index = async () => {
   await mongoose.connect(process.env.MONGODB_URL);
   console.log("DB connected!");
 
-  const pollo = await ItemModel.findByIdAndUpdate(
-    "613a44098a5282694bbf6fb8"
-  ).exec();
+  app.use(cors());
+  app.use(express.json());
 
-  pollo.category = "613a4440b8176505f66cfed5";
+  app.post("/item", async (req, res) => {
+    const newItem = req.body;
 
-  await pollo.save();
+    try {
+      const itemCreated = new ItemModel(newItem);
+      await itemCreated.save();
+      res.status(201).send("Todo ha ido genial");
+    } catch (err) {
+      console.error("\nERROR CATCH\n" + err.message + "\n\n");
+      res.status(400).send(err.message);
+    }
+  });
 
   app.listen(port, () => {
     console.log(
